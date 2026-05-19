@@ -4,6 +4,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ProjectProvider, useProject } from './context/ProjectContext'
 import { LoginView } from './components/auth/LoginView'
+import { AdminLoginPage } from './components/auth/AdminLoginPage'
 import { Sidebar } from './components/layout/Sidebar'
 import { Header } from './components/layout/Header'
 import { ConnectionStatus } from './components/layout/ConnectionStatus'
@@ -119,13 +120,76 @@ const AppContent = () => {
   )
 }
 
+// ─── Access Denied Screen ─────────────────────────────────────────────────────
+
+const AccessDenied = () => (
+  <div style={{
+    minHeight: '100vh',
+    backgroundColor: 'hsl(var(--bg-app))',
+    backgroundImage:
+      'linear-gradient(hsl(var(--border-subtle) / 0.2) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border-subtle) / 0.2) 1px, transparent 1px)',
+    backgroundSize: '48px 48px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  }}>
+    <div style={{ textAlign: 'center', maxWidth: 360 }}>
+      <div style={{
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: 72,
+        fontWeight: 900,
+        color: 'hsl(var(--border-subtle))',
+        lineHeight: 1,
+        marginBottom: 16,
+        letterSpacing: '-0.04em',
+      }}>404</div>
+      <h2 style={{
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: 14,
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        letterSpacing: '0.1em',
+        color: 'hsl(var(--text-muted))',
+        marginBottom: 24,
+      }}>Página não encontrada</h2>
+      <a
+        href="/admin"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '10px 20px',
+          background: 'hsl(var(--brand-cyan))',
+          border: '2px solid hsl(var(--text-primary))',
+          boxShadow: '4px 4px 0 hsl(var(--text-primary))',
+          color: 'hsl(220 25% 6%)',
+          fontWeight: 800,
+          fontSize: 11,
+          textDecoration: 'none',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          fontFamily: 'JetBrains Mono, monospace',
+        }}
+      >
+        Ir para /admin
+      </a>
+    </div>
+  </div>
+)
+
 // ─── Auth Gate ────────────────────────────────────────────────────────────────
 
 const AuthGate = () => {
   const { user, isLoading } = useAuth()
+  const isAdminRoute = window.location.pathname === '/admin'
 
   if (isLoading) return <LoadingScreen />
-  if (!user) return <><LoginView /><ToastContainer /></>
+
+  if (!user) {
+    if (isAdminRoute) return <><AdminLoginPage /><ToastContainer /></>
+    return <><AccessDenied /><ToastContainer /></>
+  }
 
   return (
     <ProjectProvider>
