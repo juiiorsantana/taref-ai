@@ -1,0 +1,499 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap');
+
+/* ─── HSL Design Tokens ─────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-app:        220 25% 4%;
+  --bg-surface:    220 20% 7%;
+  --bg-card:       220 18% 9%;
+  --bg-elevated:   220 16% 12%;
+  --bg-input:      220 18% 10%;
+
+  /* Borders */
+  --border-subtle: 220 15% 16%;
+  --border-active: 197 90% 42%;
+
+  /* Text */
+  --text-primary:  210 40% 96%;
+  --text-muted:    215 16% 55%;
+  --text-faint:    215 12% 35%;
+
+  /* Brand — Cobalt Blue + Electric Cyan (Purple Ban ✅) */
+  --brand-blue:    217 91% 42%;
+  --brand-cyan:    197 90% 42%;
+  --brand-amber:   38  90% 48%;
+  --brand-rose:    346 87% 55%;
+  --brand-emerald: 158 64% 40%;
+
+  /* Priority */
+  --priority-alta:  346 87% 55%;
+  --priority-media: 38  90% 48%;
+  --priority-baixa: 158 64% 40%;
+
+  /* Niche Accents */
+  --niche-medical: 197 90% 42%;
+  --niche-dental:  217 91% 52%;
+  --niche-legal:   38  90% 48%;
+  --niche-general: 158 64% 40%;
+
+  /* Tag Colors */
+  --tag-ads:    346 87% 55%;
+  --tag-design: 217 91% 52%;
+  --tag-copy:   197 90% 42%;
+  --tag-dev:    38  90% 48%;
+  --tag-seo:    158 64% 40%;
+
+  /* Geometry */
+  --radius-sm:  2px;
+  --radius-md:  4px;
+  --radius-lg:  8px;
+  --radius-xl:  12px;
+
+  /* Shadows */
+  --shadow-card: 0 2px 8px 0 hsl(220 25% 2% / 0.6), 0 1px 2px 0 hsl(220 25% 2% / 0.4);
+  --shadow-elevated: 0 8px 24px 0 hsl(220 25% 2% / 0.7);
+  --glow-cyan: 0 0 16px 0 hsl(197 90% 42% / 0.25);
+  --glow-blue: 0 0 16px 0 hsl(217 91% 42% / 0.25);
+
+  /* Transitions */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 400ms;
+}
+
+/* ─── Light Theme Override ───────────────────────────────────────────── */
+:root[data-theme="light"] {
+  /* Backgrounds — warm paper hierarchy */
+  --bg-app:        42 22% 96%;
+  --bg-surface:    32 12% 90%;
+  --bg-card:       0 0% 100%;
+  --bg-elevated:   42 15% 98%;
+  --bg-input:      0 0% 100%;
+
+  /* Borders */
+  --border-subtle: 220 12% 84%;
+  --border-active: 197 90% 42%;
+
+  /* Text — rich ink on paper */
+  --text-primary:  220 25% 8%;
+  --text-muted:    215 14% 42%;
+  --text-faint:    215 10% 62%;
+
+  /* Shadows — clean, warm */
+  --shadow-card:     0 1px 4px 0 hsl(220 20% 40% / 0.10), 0 1px 2px 0 hsl(220 20% 40% / 0.06);
+  --shadow-elevated: 0 4px 20px 0 hsl(220 20% 30% / 0.14);
+  --glow-cyan: 0 0 16px 0 hsl(197 90% 42% / 0.15);
+  --glow-blue: 0 0 16px 0 hsl(217 91% 42% / 0.15);
+}
+
+/* ─── Light Notion Theme ─────────────────────────────────────────────── */
+/* Visible warm paper, editorial typography, document-feel task view.
+   Diverges from Light theme by being noticeably warmer, with a stronger
+   sidebar contrast and content rendered as prose, not as chrome.        */
+:root[data-theme="notion"] {
+  /* Backgrounds — visible cream paper, layered surface */
+  --bg-app:        38 30% 94%;   /* #F2EADA — visibly warm canvas */
+  --bg-surface:    34 18% 86%;   /* #D9CFBE — sidebar / panels, contrast */
+  --bg-card:       38 38% 98%;   /* #FBF6EC — slightly tinted "page" */
+  --bg-elevated:   38 28% 96%;   /* #F5EDE0 — hover/elevated */
+  --bg-input:      38 24% 95%;   /* #F2EBDC — input fields */
+
+  /* Borders — warm and visible */
+  --border-subtle: 32 14% 78%;   /* #C7BBA8 */
+  --border-active: 215 65% 42%;  /* #2A5EA6 — Notion link blue */
+
+  /* Text — deep warm ink */
+  --text-primary:  28 14% 12%;   /* #25201A */
+  --text-muted:    28 8%  36%;   /* #635B53 */
+  --text-faint:    28 6%  58%;   /* #9A938A */
+
+  /* Brand — editorial, calmer */
+  --brand-blue:    215 65% 42%;
+  --brand-cyan:    195 58% 38%;
+  --brand-amber:   28  82% 44%;
+  --brand-rose:    350 65% 50%;
+  --brand-emerald: 152 50% 36%;
+
+  /* Priority — Notion-style soft pills */
+  --priority-alta:  350 70% 52%;
+  --priority-media: 30  72% 48%;
+  --priority-baixa: 152 48% 40%;
+
+  /* Niche Accents */
+  --niche-medical: 200 60% 44%;
+  --niche-dental:  215 60% 48%;
+  --niche-legal:   30  72% 48%;
+  --niche-general: 152 48% 40%;
+
+  /* Tag Colors — muted */
+  --tag-ads:    350 70% 52%;
+  --tag-design: 215 60% 48%;
+  --tag-copy:   200 60% 44%;
+  --tag-dev:    30  72% 48%;
+  --tag-seo:    152 48% 40%;
+
+  /* Geometry — softer rounding for a friendly notion feel */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  10px;
+  --radius-xl:  14px;
+
+  /* Shadows — almost flat, single subtle layer */
+  --shadow-card:     0 1px 0 0 hsl(30 10% 88%), 0 1px 2px 0 hsl(30 10% 60% / 0.06);
+  --shadow-elevated: 0 1px 3px 0 hsl(30 10% 40% / 0.08), 0 8px 24px -8px hsl(30 10% 30% / 0.10);
+  --glow-cyan: 0 0 0 3px hsl(200 60% 44% / 0.12);
+  --glow-blue: 0 0 0 3px hsl(215 60% 48% / 0.12);
+}
+
+/* ── Notion theme: typography, surfaces, scrollbar ── */
+:root[data-theme="notion"] body {
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  letter-spacing: -0.005em;
+}
+
+:root[data-theme="notion"] h1,
+:root[data-theme="notion"] h2,
+:root[data-theme="notion"] h3 {
+  font-family: 'Fraunces', 'Inter', serif;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+:root[data-theme="notion"] .card,
+:root[data-theme="notion"] .card-elevated {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+:root[data-theme="notion"] .interactive:hover {
+  border-color: hsl(var(--border-subtle));
+  background: hsl(var(--bg-elevated));
+  transform: none;
+}
+
+:root[data-theme="notion"] ::-webkit-scrollbar-thumb {
+  background: hsl(32 14% 70%);
+  border-radius: 8px;
+}
+:root[data-theme="notion"] ::-webkit-scrollbar-thumb:hover {
+  background: hsl(32 14% 55%);
+}
+
+/* ── Notion: TaskListView reimagined as a document ──
+   Strips the accordion-as-card chrome. Project name becomes a
+   large editorial heading. Tasks render as a clean prose list
+   with hanging circular checkboxes, generous vertical rhythm,
+   and a reading-width container. !important is used surgically
+   to override TaskListView's inline styles.                        */
+
+:root[data-theme="notion"] [data-comp="tlv-container"] {
+  max-width: 720px !important;
+  padding: 56px 32px 96px !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-title"] {
+  font-family: 'Fraunces', serif;
+  font-size: 34px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.03em !important;
+  margin-bottom: 4px !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-subtitle"] {
+  font-size: 13px !important;
+  color: hsl(var(--text-muted)) !important;
+  font-style: italic;
+}
+
+/* Project accordion: shed the card; become a document section */
+:root[data-theme="notion"] [data-comp="tlv-section"] {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  margin-top: 36px;
+  overflow: visible !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-section-header"] {
+  background: transparent !important;
+  border-bottom: 1px solid hsl(var(--border-subtle)) !important;
+  padding: 0 0 8px !important;
+  gap: 12px !important;
+  align-items: baseline !important;
+}
+
+/* Vertical project color stripe → small leading dot */
+:root[data-theme="notion"] [data-comp="tlv-section-header"] > div:first-child {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+}
+
+/* Project name: editorial display heading */
+:root[data-theme="notion"] [data-comp="tlv-section-title"] {
+  font-family: 'Fraunces', serif !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  color: hsl(var(--text-primary)) !important;
+}
+
+/* Status pill: lowercased, parenthetical, subtle */
+:root[data-theme="notion"] [data-comp="tlv-section-header"] select {
+  border: none !important;
+  background: transparent !important;
+  text-transform: lowercase !important;
+  font-style: italic;
+  letter-spacing: 0 !important;
+  font-weight: 400 !important;
+  font-size: 11px !important;
+  padding: 0 !important;
+}
+
+/* Task list area: generous breathing room */
+:root[data-theme="notion"] [data-comp="tlv-tasks"] > div {
+  padding: 12px 0 4px !important;
+}
+
+/* Each task row: prose-like, hanging structure */
+:root[data-theme="notion"] [data-comp="tlv-row"] {
+  padding: 8px 10px 8px 6px !important;
+  border-left: none !important;
+  border-radius: 4px !important;
+  gap: 12px !important;
+  transition: background 120ms ease !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-row"]:hover {
+  background: hsl(38 20% 90%) !important;
+}
+
+/* Circular checkbox in Notion mode */
+:root[data-theme="notion"] [data-comp="tlv-check"] {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  border-width: 1.5px !important;
+  border-color: hsl(var(--text-faint)) !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-check"][data-done="true"] {
+  background: hsl(var(--text-muted)) !important;
+  border-color: hsl(var(--text-muted)) !important;
+}
+
+/* Task title: body-prose styling, larger and warmer */
+:root[data-theme="notion"] [data-comp="tlv-row"] span[data-comp="tlv-title-text"] {
+  font-size: 15px !important;
+  letter-spacing: -0.005em !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  color: hsl(var(--text-primary)) !important;
+}
+
+/* Metadata gets quieter, always-visible (no opacity tricks) */
+:root[data-theme="notion"] [data-comp="tlv-meta"] {
+  opacity: 1 !important;
+  gap: 10px !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-meta"] > div:last-child {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: hsl(38 26% 86%) !important;
+  border: none !important;
+  font-size: 10px !important;
+  color: hsl(var(--text-muted)) !important;
+}
+
+/* Subtasks become a Notion-style toggle list with vertical rail */
+:root[data-theme="notion"] [data-comp="tlv-sub"] {
+  padding: 6px 10px 6px 46px !important;
+  background: transparent !important;
+  border-radius: 4px !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-sub"]:hover {
+  background: hsl(38 20% 90%) !important;
+}
+
+/* Replace dashed tree-lines with a clean solid vertical rail */
+:root[data-theme="notion"] [data-comp="tlv-sub"] > div:nth-child(1),
+:root[data-theme="notion"] [data-comp="tlv-sub"] > div:nth-child(2) {
+  display: none !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-sub"]::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: hsl(32 14% 80%);
+}
+
+/* "Adicionar tarefa..." becomes a quiet slash-command-ish line */
+:root[data-theme="notion"] [data-comp="tlv-add"] {
+  font-size: 13px !important;
+  padding: 8px 10px 8px 36px !important;
+  font-style: italic;
+  color: hsl(var(--text-faint)) !important;
+}
+
+:root[data-theme="notion"] [data-comp="tlv-add"]:hover {
+  background: hsl(38 20% 90%) !important;
+  color: hsl(var(--text-muted)) !important;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { height: 100%; scroll-behavior: smooth; }
+
+body {
+  height: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  background: hsl(var(--bg-app));
+  color: hsl(var(--text-primary));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color 250ms ease, color 250ms ease;
+}
+
+#root { height: 100%; display: flex; flex-direction: column; }
+
+/* ─── Typography ─────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 { font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; }
+code, kbd, pre { font-family: 'JetBrains Mono', monospace; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
+
+/* ─── Scrollbars ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: hsl(var(--bg-app)); }
+::-webkit-scrollbar-thumb { background: hsl(var(--border-subtle)); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--text-faint)); }
+
+/* ─── Utility Classes ────────────────────────────────────────────────── */
+.surface {
+  background: hsl(var(--bg-surface));
+  border: 1px solid hsl(var(--border-subtle));
+}
+
+.card {
+  background: hsl(var(--bg-card));
+  border: 1px solid hsl(var(--border-subtle));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.card-elevated {
+  background: hsl(var(--bg-elevated));
+  border: 1px solid hsl(var(--border-subtle));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+}
+
+.interactive {
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+}
+.interactive:hover {
+  border-color: hsl(var(--border-active) / 0.5);
+  transform: translateY(-1px);
+}
+.interactive:active { transform: translateY(0); }
+
+.glow-cyan:hover  { box-shadow: var(--glow-cyan); }
+.glow-blue:hover  { box-shadow: var(--glow-blue); }
+
+.text-muted  { color: hsl(var(--text-muted)); }
+.text-faint  { color: hsl(var(--text-faint)); }
+.text-cyan   { color: hsl(var(--brand-cyan)); }
+.text-blue   { color: hsl(var(--brand-blue)); }
+.text-amber  { color: hsl(var(--brand-amber)); }
+
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 0.8em; }
+
+/* ─── Animations ─────────────────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulse-overdue {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+.anim-fade-slide { animation: fadeSlideUp var(--duration-slow) var(--ease-out) forwards; }
+.anim-fade       { animation: fadeIn var(--duration-base) var(--ease-out) forwards; }
+.anim-scale      { animation: scaleIn var(--duration-base) var(--ease-spring) forwards; }
+
+.overdue-blink { animation: pulse-overdue 2s ease-in-out infinite; }
+
+/* ─── Skeleton Loader ────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--bg-elevated)) 25%,
+    hsl(var(--border-subtle)) 50%,
+    hsl(var(--bg-elevated)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Progress Bar ───────────────────────────────────────────────────── */
+.progress-bar {
+  height: 2px;
+  background: hsl(var(--border-subtle));
+  border-radius: 1px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width var(--duration-slow) var(--ease-out);
+}
+
+/* ─── Drag & Drop ────────────────────────────────────────────────────── */
+.drag-active {
+  opacity: 0.4;
+  transform: rotate(1.5deg) scale(0.98);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+.column-drop-target {
+  border-color: hsl(var(--brand-cyan) / 0.6) !important;
+  box-shadow: inset 0 0 0 1px hsl(var(--brand-cyan) / 0.3);
+  background: hsl(var(--bg-elevated)) !important;
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
