@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taref.ai — Major Hub</title>
+  <meta name="description" content="Plataforma de gestão de projetos da Major Hub. Clareza total nas entregas, para a equipe e para os clientes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #F8F7F4;
+      --bg-card:      #FFFFFF;
+      --bg-subtle:    #EFEEEA;
+      --text:         #0C0C0B;
+      --text-muted:   #6E6D68;
+      --text-faint:   #AEADA8;
+      --accent:       #1D4ED8;
+      --accent-hover: #1E40AF;
+      --accent-light: #EFF6FF;
+      --border:       #E5E4DF;
+      --border-mid:   #CCCBC6;
+      --green:        #16A34A;
+      --yellow-bg:    #FEF3C7;
+      --yellow-text:  #92400E;
+      --blue-bg:      #EFF6FF;
+      --blue-text:    #1D4ED8;
+      --green-bg:     #DCFCE7;
+      --green-text:   #15803D;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ──────────────────────────────── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 64px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(248, 247, 244, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 32px; height: 32px;
+      background: var(--text);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-mark svg {
+      width: 16px; height: 16px;
+    }
+
+    .nav-logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .nav-logo-by {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 1px;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: #2A2A28;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .btn-nav svg { width: 13px; height: 13px; transition: transform 0.2s; }
+    .btn-nav:hover svg { transform: translateX(2px); }
+
+    /* ──────────────────────────────── HERO ── */
+    .hero {
+      min-height: 100vh;
+      padding: 120px 40px 80px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(ellipse 70% 60% at 75% 50%, rgba(29,78,216,0.055) 0%, transparent 70%),
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: auto, 52px 52px, 52px 52px;
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+    }
+
+    .hero-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px 5px 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .badge-dot-wrap {
+      width: 22px; height: 22px;
+      background: var(--accent-light);
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge-dot {
+      width: 7px; height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    h1.hero-headline {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(38px, 4.8vw, 62px);
+      line-height: 1.07;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+
+    h1.hero-headline em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent) 0%, #6366F1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.68;
+      margin-bottom: 38px;
+      max-width: 430px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 26px;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .btn-hero:hover {
+      background: #252522;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+    }
+    .btn-hero svg { width: 16px; height: 16px; }
+
+    .link-ghost {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s, gap 0.2s;
+    }
+    .link-ghost:hover { color: var(--text); gap: 8px; }
+
+    /* ──────────────────────────────── MOCKUP ── */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mockup-float {
+      animation: floatY 7s ease-in-out infinite;
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0px) rotate(0.5deg); }
+      50%       { transform: translateY(-14px) rotate(-0.5deg); }
+    }
+
+    .mockup-window {
+      width: 100%;
+      max-width: 460px;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.04),
+        0 8px 24px rgba(0,0,0,0.06),
+        0 32px 72px rgba(0,0,0,0.09);
+      overflow: hidden;
+    }
+
+    .mockup-titlebar {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 6px;
+      margin-right: auto;
+    }
+    .tl { width: 10px; height: 10px; border-radius: 50%; }
+    .tl-r { background: #FC5753; }
+    .tl-y { background: #FDBC40; }
+    .tl-g { background: #33C748; }
+
+    .titlebar-name {
+      font-size: 12px;
+      color: var(--text-faint);
+      font-weight: 500;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .mockup-body {
+      padding: 20px;
+    }
+
+    .mk-project-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .mk-project-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .mk-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 100px;
+    }
+    .mk-badge-green { background: var(--green-bg); color: var(--green-text); }
+    .mk-badge-blue  { background: var(--blue-bg);  color: var(--blue-text);  }
+    .mk-badge-yellow{ background: var(--yellow-bg); color: var(--yellow-text);}
+
+    .mk-progress-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-faint);
+      margin-bottom: 5px;
+    }
+
+    .mk-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .mk-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), #818CF8);
+      animation: barIn 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+    }
+
+    @keyframes barIn {
+      from { width: 0 !important; }
+    }
+
+    .mk-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mk-col-head {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 7px;
+    }
+
+    .mk-col-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .dot-gray  { background: var(--text-faint); }
+    .dot-blue  { background: var(--accent); }
+    .dot-green { background: var(--green); }
+
+    .mk-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 9px;
+      margin-bottom: 5px;
+    }
+
+    .mk-card-title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 5px;
+    }
+
+    .mk-tag {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* Floating stat pill */
+    .stat-pill {
+      position: absolute;
+      bottom: -16px;
+      left: -48px;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.1);
+      width: 172px;
+      animation: floatY 7s ease-in-out infinite;
+      animation-delay: -3.5s;
+    }
+
+    .stat-pill-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .stat-pill-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-pill-sub {
+      font-size: 11px;
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    /* ──────────────────────────────── FEATURES ── */
+    .features {
+      padding: 100px 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .features-head {
+      max-width: 1160px;
+      margin: 0 auto 60px;
+    }
+
+    .label-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .label-tag::before {
+      content: '';
+      width: 16px; height: 1.5px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .section-h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 3.6vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .section-p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 480px;
+      font-weight: 400;
+    }
+
+    .features-grid {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .feat {
+      background: var(--bg);
+      padding: 40px;
+      transition: background 0.22s;
+      cursor: default;
+    }
+    .feat:hover { background: var(--bg-card); }
+
+    .feat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--border-mid);
+      margin-bottom: 22px;
+    }
+
+    .feat-icon-wrap {
+      width: 46px; height: 46px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .feat:hover .feat-icon-wrap {
+      border-color: rgba(29,78,216,0.25);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    .feat-icon-wrap svg {
+      width: 20px; height: 20px;
+      stroke: var(--accent);
+    }
+
+    .feat-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.025em;
+      margin-bottom: 10px;
+    }
+
+    .feat-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.68;
+    }
+
+    /* ──────────────────────────────── CLIENTS ── */
+    .clients {
+      background: var(--text);
+      padding: 100px 40px;
+    }
+
+    .clients-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 88px;
+      align-items: center;
+    }
+
+    .clients .label-tag        { color: rgba(248,247,244,0.45); }
+    .clients .label-tag::before{ background: rgba(248,247,244,0.45); }
+    .clients .section-h2       { color: #F8F7F4; }
+    .clients .section-p        { color: rgba(248,247,244,0.55); max-width: 400px; }
+
+    .btn-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 22px;
+      background: #F8F7F4;
+      color: var(--text);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      margin-top: 36px;
+      transition: all 0.2s;
+    }
+    .btn-white:hover {
+      background: #ECEAE6;
+      transform: translateY(-1px);
+    }
+
+    .client-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .c-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 18px 20px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .c-card:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    .c-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .c-card-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #F8F7F4;
+    }
+
+    .c-status {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 100px;
+    }
+    .s-progress { background: rgba(29,78,216,0.35); color: #93C5FD; }
+    .s-review   { background: rgba(217,119,6,0.35);  color: #FCD34D; }
+    .s-done     { background: rgba(22,163,74,0.35);  color: #86EFAC; }
+
+    .c-bar {
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .c-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #60A5FA, #818CF8);
+    }
+
+    .c-meta {
+      display: flex;
+      gap: 18px;
+      font-size: 11px;
+      color: rgba(248,247,244,0.35);
+    }
+
+    /* ──────────────────────────────── FOOTER ── */
+    footer {
+      padding: 44px 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-in {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .footer-logo-mark {
+      width: 28px; height: 28px;
+      background: var(--text);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer-logo-mark svg { width: 13px; height: 13px; }
+
+    .footer-brand-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .footer-brand-sub {
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .footer-right {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    /* ──────────────────────────────── ANIMATIONS ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(22px);
+      transition:
+        opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .fade-in.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.16s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.32s; }
+
+    /* Hero entrance */
+    .hero-badge    { animation: riseIn 0.55s ease both 0.05s; }
+    .hero-headline { animation: riseIn 0.55s ease both 0.15s; }
+    .hero-sub      { animation: riseIn 0.55s ease both 0.25s; }
+    .hero-actions  { animation: riseIn 0.55s ease both 0.35s; }
+    .hero-visual   { animation: riseIn 0.7s ease both 0.2s; }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ──────────────────────────────── RESPONSIVE ── */
+    @media (max-width: 920px) {
+      nav { padding: 0 20px; }
+      .nav-link { display: none; }
+      .hero { padding: 100px 20px 60px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { display: none; }
+      .features { padding: 72px 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .clients { padding: 72px 20px; }
+      .clients-inner { grid-template-columns: 1fr; gap: 48px; }
+      footer { padding: 32px 20px; }
+      .footer-in { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ──── NAV ──── -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <div>
+        <div class="nav-logo-text">Taref.ai</div>
+        <div class="nav-logo-by">by Major Hub</div>
+      </div>
+    </a>
+    <div class="nav-right">
+      <a href="#features" class="nav-link">Funcionalidades</a>
+      <a href="#clientes" class="nav-link">Para clientes</a>
+      <a href="/app" class="btn-nav">
+        Acessar Portal
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ──── HERO ──── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-inner">
+
+      <div class="hero-content">
+        <div class="hero-badge">
+          <div class="badge-dot-wrap"><span class="badge-dot"></span></div>
+          Major Hub · Plataforma de Projetos
+        </div>
+
+        <h1 class="hero-headline">
+          Projetos claros.<br>
+          Clientes <em>satisfeitos.</em>
+        </h1>
+
+        <p class="hero-sub">
+          Taref.ai é a plataforma interna da Major Hub para organizar tarefas, controlar prazos e manter clientes informados — tudo em um só lugar.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/app" class="btn-hero">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Acessar Portal
+          </a>
+          <a href="#features" class="link-ghost">
+            Ver funcionalidades →
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="mockup-float">
+          <div class="mockup-window">
+            <div class="mockup-titlebar" style="position:relative;">
+              <div class="traffic-lights">
+                <span class="tl tl-r"></span>
+                <span class="tl tl-y"></span>
+                <span class="tl tl-g"></span>
+              </div>
+              <span class="titlebar-name">Taref.ai · Kanban</span>
+            </div>
+            <div class="mockup-body">
+              <div class="mk-project-row">
+                <div class="mk-project-name">Website Major Hub</div>
+                <span class="mk-badge mk-badge-green">Em andamento</span>
+              </div>
+              <div class="mk-progress-row">
+                <span>Progresso geral</span><span>68%</span>
+              </div>
+              <div class="mk-bar">
+                <div class="mk-bar-fill" style="width:68%"></div>
+              </div>
+              <div class="mk-cols">
+                <!-- A fazer -->
+                <div>
+                  <div class="mk-col-head">
+                    <span class="mk-col-dot dot-gray"></span> A fazer
+                  </div>
+                  <div class="mk-card">
+                    <div class="mk-card-title">Copywriting home</div>
+                    <span class="mk-tag" style="background:var(--yellow-bg);color:var(--yellow-text)">Conteúdo</span>
+                  </div>
+                  <div class="mk-card">
+                    <div class="mk-card-title">Revisar SEO</div>
+                    <span class="mk-tag" style="background:var(--blue-bg);color:var(--blue-text)">Tech</span>
+                  </div>
+                </div>
+                <!-- Em andamento -->
+                <div>
+                  <div class="mk-col-head">
+                    <span class="mk-col-dot dot-blue"></span> Fazendo
+                  </div>
+                  <div class="mk-card">
+                    <div class="mk-card-title">Dev front-end</div>
+                    <span class="mk-tag" style="background:var(--blue-bg);color:var(--blue-text)">Tech</span>
+                  </div>
+                  <div class="mk-card">
+                    <div class="mk-card-title">Integrações</div>
+                    <span class="mk-tag" style="background:var(--blue-bg);color:var(--blue-text)">Tech</span>
+                  </div>
+                </div>
+                <!-- Concluído -->
+                <div>
+                  <div class="mk-col-head">
+                    <span class="mk-col-dot dot-green"></span> Feito
+                  </div>
+                  <div class="mk-card">
+                    <div class="mk-card-title">Wireframes</div>
+                    <span class="mk-tag" style="background:var(--green-bg);color:var(--green-text)">Design</span>
+                  </div>
+                  <div class="mk-card">
+                    <div class="mk-card-title">Layout mobile</div>
+                    <span class="mk-tag" style="background:var(--green-bg);color:var(--green-text)">Design</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating stat pill -->
+          <div class="stat-pill">
+            <div class="stat-pill-label">Tarefas ativas</div>
+            <div class="stat-pill-value">24</div>
+            <div class="stat-pill-sub">↑ 3 essa semana</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──── FEATURES ──── -->
+  <section class="features" id="features">
+    <div class="features-head">
+      <div class="label-tag fade-in">Funcionalidades</div>
+      <h2 class="section-h2 fade-in d1">Tudo que a agência<br>precisa, em um só lugar.</h2>
+      <p class="section-p fade-in d2">Do planejamento à entrega, o Taref.ai mantém a equipe alinhada e os clientes informados — sem ruído, sem retrabalho.</p>
+    </div>
+
+    <div class="features-grid fade-in d1">
+      <div class="feat">
+        <div class="feat-num">01</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          </svg>
+        </div>
+        <div class="feat-title">Kanban Visual</div>
+        <p class="feat-desc">Organize tarefas por etapa de entrega com clareza total. Veja o que está parado, o que avança e o que foi concluído — em tempo real.</p>
+      </div>
+
+      <div class="feat">
+        <div class="feat-num">02</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div class="feat-title">Visão Global</div>
+        <p class="feat-desc">Consolide tarefas de todos os clientes em um único painel. Identifique gargalos antes que se tornem problemas de entrega.</p>
+      </div>
+
+      <div class="feat">
+        <div class="feat-num">03</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div class="feat-title">Controle de Prazos</div>
+        <p class="feat-desc">Dashboard de deadlines com alertas automáticos. Nunca mais perca uma entrega ou seja pego de surpresa por um prazo vencido.</p>
+      </div>
+
+      <div class="feat">
+        <div class="feat-num">04</div>
+        <div class="feat-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="feat-title">Multi-cliente</div>
+        <p class="feat-desc">Gerencie múltiplos clientes com contextos separados e seguros. Cada equipe vê somente o que precisa — sem cruzamento de informações.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── CLIENTS ──── -->
+  <section class="clients" id="clientes">
+    <div class="clients-inner">
+      <div class="clients-copy">
+        <div class="label-tag fade-in">Para nossos clientes</div>
+        <h2 class="section-h2 fade-in d1">Seu projeto,<br>em tempo real.</h2>
+        <p class="section-p fade-in d2">
+          Sem e-mails perdidos. Sem planilhas confusas. Seus clientes acompanham o andamento de cada entrega diretamente no portal — com transparência e confiança.
+        </p>
+        <a href="/app" class="btn-white fade-in d3">
+          Acessar como cliente →
+        </a>
+      </div>
+
+      <div class="client-cards fade-in d2">
+        <div class="c-card">
+          <div class="c-card-top">
+            <div class="c-card-name">Identidade Visual — Rebrand</div>
+            <span class="c-status s-progress">Em andamento</span>
+          </div>
+          <div class="c-bar"><div class="c-bar-fill" style="width:55%"></div></div>
+          <div class="c-meta"><span>8 tarefas</span><span>Prazo: 30 jun</span></div>
+        </div>
+
+        <div class="c-card">
+          <div class="c-card-top">
+            <div class="c-card-name">Campanha Social Media · Q2</div>
+            <span class="c-status s-review">Em revisão</span>
+          </div>
+          <div class="c-bar"><div class="c-bar-fill" style="width:85%"></div></div>
+          <div class="c-meta"><span>12 tarefas</span><span>Prazo: 15 jun</span></div>
+        </div>
+
+        <div class="c-card">
+          <div class="c-card-top">
+            <div class="c-card-name">Website Institucional</div>
+            <span class="c-status s-progress">Em andamento</span>
+          </div>
+          <div class="c-bar"><div class="c-bar-fill" style="width:68%"></div></div>
+          <div class="c-meta"><span>15 tarefas</span><span>Prazo: 10 jul</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── FOOTER ──── -->
+  <footer>
+    <div class="footer-in">
+      <a href="#" class="footer-logo">
+        <div class="footer-logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+        </div>
+        <div>
+          <div class="footer-brand-name">Major Hub</div>
+          <div class="footer-brand-sub">Taref.ai · Gestão de Projetos</div>
+        </div>
+      </a>
+      <div class="footer-right">© 2025 Major Hub. Todos os direitos reservados.</div>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Smooth nav highlight on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY + 100;
+      sections.forEach(s => {
+        if (y >= s.offsetTop && y < s.offsetTop + s.offsetHeight) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.nav-link[href="#${s.id}"]`);
+          if (active) active.style.color = 'var(--text)';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
