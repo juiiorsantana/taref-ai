@@ -221,11 +221,6 @@ export const GlobalTasksView = ({ searchQuery }: GlobalTasksViewProps) => {
   }, [activeClients, searchQuery, state.projects, state.tasks])
 
   // Global summary numbers
-  const totalActiveTasks = state.tasks.filter((t) => t.status !== 'done').length
-  const totalOverdue = state.tasks.filter((t) => {
-    if (!t.deadline || t.status === 'done') return false
-    return new Date(t.deadline) < new Date()
-  }).length
   const totalProjects = state.projects.filter((p) => !p.isArchived).length
 
   return (
