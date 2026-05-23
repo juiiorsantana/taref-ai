@@ -7,7 +7,7 @@ import { generateId } from '../../utils/date'
 import type { Client, ClientNiche } from '../../types'
 import {
   Search, Plus, Zap, ArrowRight, FolderOpen, X, Building2,
-  Stethoscope, Scale, Briefcase, Layers, LogOut,
+  Stethoscope, Scale, Briefcase, Layers, LogOut, Globe,
 } from 'lucide-react'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -287,9 +287,10 @@ const AddClientModal = ({ isOpen, onClose }: AddClientModalProps) => {
 
 export const ClientPortal = () => {
   const { state, dispatch } = useProject()
-  const { signOut } = useAuth()
+  const { signOut, isAdmin } = useAuth()
   const [search, setSearch] = useState('')
   const [hoveredClient, setHoveredClient] = useState<string | null>(null)
+  const [hoveredMajorHub, setHoveredMajorHub] = useState(false)
   const [addHovered, setAddHovered] = useState(false)
   const [logoutHovered, setLogoutHovered] = useState(false)
   const [showAddClient, setShowAddClient] = useState(false)
@@ -304,6 +305,14 @@ export const ClientPortal = () => {
   const handleSelectClient = (clientId: string) => {
     dispatch({ type: 'SET_ACTIVE_CLIENT', payload: clientId })
   }
+
+  const handleSelectMajorHub = () => {
+    dispatch({ type: 'SET_ACTIVE_CLIENT', payload: 'global' })
+  }
+
+  // Totals for Major Hub card
+  const totalActiveProjects = state.projects.filter((p) => !p.isArchived).length
+  const totalActiveTasks = state.tasks.filter((t) => t.status !== 'done').length
 
   return (
     <div
@@ -470,6 +479,160 @@ export const ClientPortal = () => {
               <strong style={{ color: 'hsl(var(--text-primary))' }}>"{search}"</strong>
             </p>
           </div>
+        )}
+
+        {/* ── Major Hub card (admin only) ── */}
+        {isAdmin && !search && (
+          <div style={{ marginBottom: 24 }}>
+            <p style={{
+              fontSize: '9px', fontWeight: 600, letterSpacing: '0.14em',
+              color: 'hsl(var(--text-faint))', textTransform: 'uppercase',
+              marginBottom: 10,
+            }}>
+              Agência
+            </p>
+            <button
+              onClick={handleSelectMajorHub}
+              onMouseEnter={() => setHoveredMajorHub(true)}
+              onMouseLeave={() => setHoveredMajorHub(false)}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'stretch',
+                textAlign: 'left',
+                padding: 0,
+                backgroundColor: hoveredMajorHub ? 'hsl(var(--brand-cyan) / 0.06)' : 'hsl(var(--bg-surface))',
+                border: `2px solid ${hoveredMajorHub ? 'hsl(var(--brand-cyan))' : 'hsl(var(--brand-cyan) / 0.4)'}`,
+                borderRadius: '0',
+                cursor: 'pointer',
+                overflow: 'hidden',
+                boxShadow: hoveredMajorHub
+                  ? '6px 6px 0 hsl(var(--brand-cyan) / 0.4)'
+                  : '3px 3px 0 hsl(var(--brand-cyan) / 0.2)',
+                transform: hoveredMajorHub ? 'translate(-2px, -2px)' : 'none',
+                transition: 'transform 0.15s, box-shadow 0.15s, border-color 0.15s, background 0.15s',
+              }}
+            >
+              {/* Left cyan accent stripe */}
+              <div style={{
+                width: hoveredMajorHub ? 6 : 4,
+                background: 'linear-gradient(180deg, hsl(var(--brand-cyan)), hsl(var(--brand-blue)))',
+                flexShrink: 0,
+                transition: 'width 0.15s',
+              }} />
+
+              {/* Card body */}
+              <div style={{ padding: '16px 20px', flex: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
+                {/* Avatar */}
+                <div style={{
+                  width: 48, height: 48, flexShrink: 0,
+                  background: 'linear-gradient(135deg, hsl(var(--brand-cyan)), hsl(var(--brand-blue)))',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '2px solid hsl(var(--brand-cyan) / 0.5)',
+                }}>
+                  <Globe size={22} color="#fff" />
+                </div>
+
+                {/* Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span style={{
+                      fontSize: '15px', fontWeight: 700, letterSpacing: '-0.025em',
+                      color: hoveredMajorHub ? 'hsl(var(--brand-cyan))' : 'hsl(var(--text-primary))',
+                      transition: 'color 0.15s',
+                    }}>
+                      Major Hub
+                    </span>
+                    <span style={{
+                      fontSize: '9px', fontWeight: 700,
+                      fontFamily: 'JetBrains Mono, Courier New, monospace',
+                      color: 'hsl(var(--brand-cyan))',
+                      background: 'hsl(var(--brand-cyan) / 0.1)',
+                      border: '1px solid hsl(var(--brand-cyan) / 0.35)',
+                      padding: '2px 7px', letterSpacing: '0.12em', textTransform: 'uppercase',
+                    }}>
+                      AGÊNCIA
+                    </span>
+                  </div>
+                  <p style={{
+                    fontSize: '11px', color: 'hsl(var(--text-faint))', margin: 0, lineHeight: 1.5,
+                  }}>
+                    Visão consolidada de todos os clientes e projetos
+                  </p>
+                </div>
+
+                {/* Stats */}
+                <div style={{ display: 'flex', gap: 16, flexShrink: 0 }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{
+                      fontSize: '20px', fontWeight: 800,
+                      fontFamily: 'JetBrains Mono, monospace',
+                      color: 'hsl(var(--brand-cyan))', lineHeight: 1,
+                    }}>
+                      {state.clients.filter(c => !c.isArchived).length}
+                    </div>
+                    <div style={{
+                      fontSize: '9px', color: 'hsl(var(--text-faint))',
+                      textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2,
+                    }}>
+                      Clientes
+                    </div>
+                  </div>
+                  <div style={{ width: 1, background: 'hsl(var(--border-subtle))' }} />
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{
+                      fontSize: '20px', fontWeight: 800,
+                      fontFamily: 'JetBrains Mono, monospace',
+                      color: 'hsl(var(--brand-amber))', lineHeight: 1,
+                    }}>
+                      {totalActiveProjects}
+                    </div>
+                    <div style={{
+                      fontSize: '9px', color: 'hsl(var(--text-faint))',
+                      textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2,
+                    }}>
+                      Projetos
+                    </div>
+                  </div>
+                  <div style={{ width: 1, background: 'hsl(var(--border-subtle))' }} />
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{
+                      fontSize: '20px', fontWeight: 800,
+                      fontFamily: 'JetBrains Mono, monospace',
+                      color: 'hsl(var(--brand-rose))', lineHeight: 1,
+                    }}>
+                      {totalActiveTasks}
+                    </div>
+                    <div style={{
+                      fontSize: '9px', color: 'hsl(var(--text-faint))',
+                      textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2,
+                    }}>
+                      Tarefas
+                    </div>
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <ArrowRight size={16} style={{
+                  color: hoveredMajorHub ? 'hsl(var(--brand-cyan))' : 'hsl(var(--text-faint))',
+                  transform: hoveredMajorHub ? 'translateX(3px)' : 'none',
+                  transition: 'transform 0.15s, color 0.15s',
+                  flexShrink: 0,
+                }} />
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* ── Section heading for client accounts ── */}
+        {isAdmin && (
+          <p style={{
+            fontSize: '9px', fontWeight: 600, letterSpacing: '0.14em',
+            color: 'hsl(var(--text-faint))', textTransform: 'uppercase',
+            marginBottom: 10,
+          }}>
+            Clientes
+          </p>
         )}
 
         {/* Client grid */}

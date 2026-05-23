@@ -13,6 +13,9 @@ import { ClientPortal } from './components/dashboard/ClientPortal'
 import { DataMigrator } from './components/dashboard/DataMigrator'
 import { KanbanBoard } from './components/kanban/KanbanBoard'
 import { TaskListView } from './components/tasks/TaskListView'
+import { GlobalTasksView } from './components/tasks/GlobalTasksView'
+import { GlobalDashboardView } from './components/dashboard/GlobalDashboardView'
+import { ImportMdModal } from './components/dashboard/ImportMdModal'
 import { SettingsView } from './components/dashboard/SettingsView'
 import { UserManagementView } from './components/admin/UserManagementView'
 import { AcceptInviteView } from './components/auth/AcceptInviteView'
@@ -52,7 +55,9 @@ const AppContent = () => {
   const { isAdmin, isSuperAdmin } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddProject, setShowAddProject] = useState(false)
+  const [showImportMd, setShowImportMd] = useState(false)
 
+  // Redirect to ClientPortal only when no client is selected AND we're not in global (Major Hub) mode
   if (!state.activeClientId) {
     return (
       <>
@@ -65,7 +70,7 @@ const AppContent = () => {
     )
   }
 
-  const isKanban = state.activeView === 'kanban' && !!state.activeClientId
+  const isGlobalMode = state.activeClientId === 'global'
 
   const renderView = () => {
     if (state.activeView === 'user-management') {
@@ -73,8 +78,15 @@ const AppContent = () => {
       return <UserManagementView />
     }
     if (state.activeView === 'settings') return <SettingsView />
+
+    if (isGlobalMode) {
+      if (state.activeView === 'dashboard') return <GlobalDashboardView searchQuery={searchQuery} />
+      if (state.activeView === 'kanban') return <KanbanBoard />
+      if (state.activeView === 'tasks') return <GlobalTasksView searchQuery={searchQuery} />
+    }
+
     if (state.activeView === 'tasks' && state.activeClientId) return <TaskListView />
-    if (isKanban) return <KanbanBoard />
+    if (state.activeView === 'kanban' && !!state.activeClientId) return <KanbanBoard />
     return (
       <ProjectGrid
         searchQuery={searchQuery}
@@ -99,6 +111,7 @@ const AppContent = () => {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onAddProject={() => setShowAddProject(true)}
+          onImportMd={() => setShowImportMd(true)}
         />
 
         <main
@@ -112,6 +125,11 @@ const AppContent = () => {
       <AddProjectModal
         isOpen={showAddProject}
         onClose={() => setShowAddProject(false)}
+      />
+
+      <ImportMdModal
+        isOpen={showImportMd}
+        onClose={() => setShowImportMd(false)}
       />
 
       <ConnectionStatus />

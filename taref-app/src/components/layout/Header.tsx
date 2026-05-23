@@ -1,4 +1,4 @@
-import { Search, Plus, ChevronLeft, LogOut } from 'lucide-react'
+import { Search, Plus, ChevronLeft, LogOut, Upload } from 'lucide-react'
 import { useProject } from '../../context/ProjectContext'
 import { useAuth } from '../../context/AuthContext'
 
@@ -6,14 +6,16 @@ interface HeaderProps {
   searchQuery: string
   onSearchChange: (q: string) => void
   onAddProject: () => void
+  onImportMd?: () => void
 }
 
-export const Header = ({ searchQuery, onSearchChange, onAddProject }: HeaderProps) => {
+export const Header = ({ searchQuery, onSearchChange, onAddProject, onImportMd }: HeaderProps) => {
   const { state, dispatch } = useProject()
   const { signOut } = useAuth()
   const activeProject = state.projects.find((p) => p.id === state.activeProjectId)
   const activeClient = state.clients.find((c) => c.id === state.activeClientId)
   const isKanban = state.activeView === 'kanban' && !!state.activeClientId
+  const isGlobalMode = state.activeClientId === 'global'
 
   return (
     <header
@@ -102,26 +104,56 @@ export const Header = ({ searchQuery, onSearchChange, onAddProject }: HeaderProp
 
       {/* Right actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-        {!isKanban && (
-          <button
-            id="add-project-btn"
-            onClick={onAddProject}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              background: 'hsl(var(--brand-cyan))',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              color: 'hsl(220 25% 6%)',
-              fontSize: '12px', fontWeight: 700,
-              padding: '6px 12px', cursor: 'pointer',
-              transition: 'opacity var(--duration-fast)',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.88')}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-          >
-            <Plus size={13} />
-            Novo Projeto
-          </button>
+        {!isKanban && !isGlobalMode && (
+          <>
+            {onImportMd && (
+              <button
+                onClick={onImportMd}
+                title="Importar projeto via .md"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  background: 'none',
+                  border: '1px solid hsl(var(--border-subtle))',
+                  borderRadius: 'var(--radius-sm)',
+                  color: 'hsl(var(--text-muted))',
+                  fontSize: '12px', fontWeight: 600,
+                  padding: '5px 11px', cursor: 'pointer',
+                  transition: 'all var(--duration-fast)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'hsl(var(--brand-amber) / 0.6)'
+                  e.currentTarget.style.color = 'hsl(var(--brand-amber))'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'hsl(var(--border-subtle))'
+                  e.currentTarget.style.color = 'hsl(var(--text-muted))'
+                }}
+              >
+                <Upload size={12} />
+                Importar .md
+              </button>
+            )}
+
+            <button
+              id="add-project-btn"
+              onClick={onAddProject}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                background: 'hsl(var(--brand-cyan))',
+                border: 'none',
+                borderRadius: 'var(--radius-sm)',
+                color: 'hsl(220 25% 6%)',
+                fontSize: '12px', fontWeight: 700,
+                padding: '6px 12px', cursor: 'pointer',
+                transition: 'opacity var(--duration-fast)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.88')}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+            >
+              <Plus size={13} />
+              Novo Projeto
+            </button>
+          </>
         )}
 
         <div style={{ width: 1, height: 16, background: 'hsl(var(--border-subtle))' }} />

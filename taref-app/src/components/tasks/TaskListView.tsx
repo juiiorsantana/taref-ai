@@ -25,7 +25,7 @@ const COLOR_OPTIONS = ['#06B6D4', '#1E40AF', '#D97706', '#10B981', '#EF4444', '#
 
 // ─── EditProjectModal ─────────────────────────────────────────────────────────
 
-const EditProjectModal = ({ project, onClose }: { project: Project | null; onClose: () => void }) => {
+export const EditProjectModal = ({ project, onClose }: { project: Project | null; onClose: () => void }) => {
   const { dispatch } = useProject()
   const [form, setForm] = useState({ name: '', description: '', color: '#06B6D4', status: 'em_andamento' as ProjectStatus })
 
@@ -163,7 +163,7 @@ export const TaskListView = () => {
 
 // ─── ProjectAccordion ─────────────────────────────────────────────────────────
 
-const ProjectAccordion = ({
+export const ProjectAccordion = ({
   project,
   tasks,
   onOpenTask,

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useProject } from '../../context/ProjectContext'
 import { PriorityBadge, TagBadge } from '../ui/Badge'
 import { Modal } from '../ui/Modal'
@@ -15,9 +15,10 @@ interface TaskCardProps {
   onDragStart: (e: React.DragEvent, taskId: string) => void
   onDragEnd:   (e: React.DragEvent) => void
   onClick: (task: Task) => void
+  contextLabel?: string
 }
 
-const TaskCard = ({ task, onDragStart, onDragEnd, onClick }: TaskCardProps) => {
+const TaskCard = ({ task, onDragStart, onDragEnd, onClick, contextLabel }: TaskCardProps) => {
   const overdue = isOverdue(task.deadline)
   const dueSoon = isDueSoon(task.deadline)
   const completedSubs = task.subtasks.filter((s) => s.completed).length
@@ -108,6 +109,23 @@ const TaskCard = ({ task, onDragStart, onDragEnd, onClick }: TaskCardProps) => {
           {task.responsible}
         </span>
       </div>
+
+      {/* Context label (shown in global mode) */}
+      {contextLabel && (
+        <div style={{
+          marginTop: 6,
+          fontSize: '10px',
+          color: 'hsl(var(--text-faint))',
+          fontFamily: 'JetBrains Mono, monospace',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          borderTop: '1px solid hsl(var(--border-subtle))',
+          paddingTop: 5,
+        }}>
+          {contextLabel}
+        </div>
+      )}
     </div>
   )
 }
@@ -125,11 +143,12 @@ interface KanbanColumnProps {
   onDragEnd: (e: React.DragEvent) => void
   onAddTask?: () => void
   onTaskClick: (task: Task) => void
+  contextLabels?: Map<string, string>
 }
 
 const KanbanColumn = ({
   status, label, tasks, accentColor,
-  draggingId, onDrop, onDragStart, onDragEnd, onAddTask, onTaskClick,
+  draggingId, onDrop, onDragStart, onDragEnd, onAddTask, onTaskClick, contextLabels,
 }: KanbanColumnProps) => {
   const [isOver, setIsOver] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -140,6 +159,7 @@ const KanbanColumn = ({
       style={{
         flex: '1 1 0', minWidth: 260, maxWidth: 380,
         display: 'flex', flexDirection: 'column', gap: 0,
+        height: '100%',
       }}
       onDragOver={(e) => { e.preventDefault(); setIsOver(true) }}
       onDragLeave={(e) => { if (!ref.current?.contains(e.relatedTarget as Node)) setIsOver(false) }}
@@ -196,6 +216,7 @@ const KanbanColumn = ({
           display: 'flex', flexDirection: 'column', gap: 8,
           transition: 'all var(--duration-fast)',
           boxShadow: isOver ? `inset 0 0 0 1px ${accentColor}30` : 'none',
+          overflowY: 'auto',
         }}
       >
         {tasks.length === 0 && (
@@ -219,6 +240,7 @@ const KanbanColumn = ({
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
               onClick={onTaskClick}
+              contextLabel={contextLabels?.get(task.id)}
             />
           </div>
         ))}
@@ -675,15 +697,29 @@ export const KanbanBoard = () => {
   const [showAddTask, setShowAddTask] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
+  const isGlobalMode = state.activeClientId === 'global'
   const activeProject = state.projects.find((p) => p.id === state.activeProjectId)
 
   const clientProjectIds = state.projects
     .filter((p) => p.clientId === state.activeClientId && !p.isArchived)
     .map((p) => p.id)
 
-  const projectTasks = activeProject
-    ? state.tasks.filter((t) => t.projectId === activeProject.id)
-    : state.tasks.filter((t) => clientProjectIds.includes(t.projectId))
+  const projectTasks = isGlobalMode
+    ? state.tasks
+    : activeProject
+      ? state.tasks.filter((t) => t.projectId === activeProject.id)
+      : state.tasks.filter((t) => clientProjectIds.includes(t.projectId))
+
+  const contextLabels = useMemo(() => {
+    if (!isGlobalMode) return undefined
+    const map = new Map<string, string>()
+    state.tasks.forEach((t) => {
+      const project = state.projects.find((p) => p.id === t.projectId)
+      const client = state.clients.find((c) => c.id === project?.clientId)
+      if (project && client) map.set(t.id, `${client.name} / ${project.name}`)
+    })
+    return map
+  }, [isGlobalMode, state.tasks, state.projects, state.clients])
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
     e.dataTransfer.setData('text/plain', taskId)
@@ -741,7 +777,8 @@ export const KanbanBoard = () => {
       <div style={{
         flex: 1, display: 'flex', gap: 12,
         padding: 20, overflowX: 'auto', overflowY: 'hidden',
-        alignItems: 'flex-start',
+        alignItems: 'stretch',
+        minHeight: 0,
       }}>
         {COLUMNS.map((col) => (
           <KanbanColumn
@@ -756,6 +793,7 @@ export const KanbanBoard = () => {
             onDragEnd={handleDragEnd}
             onAddTask={activeProject ? () => setShowAddTask(true) : undefined}
             onTaskClick={setSelectedTask}
+            contextLabels={contextLabels}
           />
         ))}
       </div>

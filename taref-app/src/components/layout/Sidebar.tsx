@@ -1,14 +1,26 @@
-import { LayoutDashboard, Kanban, ListTodo, Zap, ChevronDown, LogOut, Settings, Users } from 'lucide-react'
+import { LayoutDashboard, Kanban, ListTodo, Zap, ChevronDown, LogOut, Settings, Users, Globe } from 'lucide-react'
 import { useProject } from '../../context/ProjectContext'
 import { useAuth } from '../../context/AuthContext'
 import { useState } from 'react'
 
+// Virtual "client" used when the agency global view (Major Hub) is active
+const MAJOR_HUB_VIRTUAL = {
+  id: 'global',
+  name: 'Major Hub',
+  color: 'hsl(var(--brand-cyan))',
+}
+
 export const Sidebar = () => {
   const { state, dispatch } = useProject()
-  const { isSuperAdmin } = useAuth()
+  const { isSuperAdmin, isAdmin } = useAuth()
   const [showSwitcher, setShowSwitcher] = useState(false)
 
-  const activeClient = state.clients.find((c) => c.id === state.activeClientId)
+  const isGlobalMode = state.activeClientId === 'global'
+
+  const activeClient = isGlobalMode
+    ? MAJOR_HUB_VIRTUAL
+    : state.clients.find((c) => c.id === state.activeClientId)
+
   const otherClients = state.clients.filter((c) => !c.isArchived && c.id !== state.activeClientId)
 
   const handleSwitchClient = (clientId: string | null) => {
@@ -16,11 +28,23 @@ export const Sidebar = () => {
     setShowSwitcher(false)
   }
 
-  const activeCount  = state.tasks.filter((t) => t.status !== 'done').length
-  const overdueCount = state.tasks.filter((t) => {
+  // Stats aggregate all clients in global mode, or only the active client otherwise
+  const relevantTasks = isGlobalMode
+    ? state.tasks
+    : state.tasks.filter((t) => {
+        const proj = state.projects.find((p) => p.id === t.projectId)
+        return proj?.clientId === state.activeClientId
+      })
+
+  const activeCount  = relevantTasks.filter((t) => t.status !== 'done').length
+  const overdueCount = relevantTasks.filter((t) => {
     if (!t.deadline || t.status === 'done') return false
     return new Date(t.deadline) < new Date()
   }).length
+
+  const projectCount = isGlobalMode
+    ? state.projects.filter((p) => !p.isArchived).length
+    : state.projects.filter((p) => !p.isArchived && p.clientId === state.activeClientId).length
 
   return (
     <aside
@@ -70,12 +94,18 @@ export const Sidebar = () => {
         }}>
           Navegação
         </p>
-        <NavItem
-          icon={<LayoutDashboard size={14} />}
-          label="Dashboard"
-          isActive={state.activeView === 'dashboard'}
-          onClick={() => dispatch({ type: 'SET_VIEW', payload: 'dashboard' })}
-        />
+
+        {/* Dashboard — shown whenever a client (including global mode) is active */}
+        {state.activeClientId && (
+          <NavItem
+            icon={<LayoutDashboard size={14} />}
+            label="Dashboard"
+            isActive={state.activeView === 'dashboard'}
+            onClick={() => dispatch({ type: 'SET_VIEW', payload: 'dashboard' })}
+          />
+        )}
+
+        {/* Kanban — shown whenever a client (including global mode) is active */}
         {state.activeClientId && (
           <NavItem
             icon={<Kanban size={14} />}
@@ -84,6 +114,8 @@ export const Sidebar = () => {
             onClick={() => dispatch({ type: 'SET_VIEW', payload: 'kanban' })}
           />
         )}
+
+        {/* Tarefas — shown whenever a client (including global mode) is active */}
         {state.activeClientId && (
           <NavItem
             icon={<ListTodo size={14} />}
@@ -92,6 +124,7 @@ export const Sidebar = () => {
             onClick={() => dispatch({ type: 'SET_VIEW', payload: 'tasks' })}
           />
         )}
+
         {isSuperAdmin && (
           <NavItem
             icon={<Users size={14} />}
@@ -118,7 +151,7 @@ export const Sidebar = () => {
         {overdueCount > 0 && (
           <StatRow label="Atrasadas" value={overdueCount} color="hsl(var(--brand-rose))" pulse />
         )}
-        <StatRow label="Projetos" value={state.projects.filter((p) => !p.isArchived).length} color="hsl(var(--brand-amber))" />
+        <StatRow label="Projetos" value={projectCount} color="hsl(var(--brand-amber))" />
       </nav>
 
       {/* Client Switcher */}
@@ -137,7 +170,9 @@ export const Sidebar = () => {
               justifyContent: 'space-between',
               padding: '7px 10px',
               backgroundColor: 'hsl(var(--bg-elevated))',
-              border: '1px solid hsl(var(--border-subtle))',
+              border: isGlobalMode
+                ? '1px solid hsl(var(--brand-cyan) / 0.4)'
+                : '1px solid hsl(var(--border-subtle))',
               borderRadius: '2px',
               color: 'hsl(var(--text-primary))',
               cursor: 'pointer',
@@ -149,7 +184,7 @@ export const Sidebar = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflow: 'hidden' }}>
               <div style={{
                 width: 8, height: 8,
-                backgroundColor: activeClient.color || 'hsl(var(--brand-cyan))',
+                backgroundColor: isGlobalMode ? 'hsl(var(--brand-cyan))' : (activeClient as { color: string }).color || 'hsl(var(--brand-cyan))',
                 borderRadius: '50%',
                 flexShrink: 0,
               }} />
@@ -183,6 +218,32 @@ export const Sidebar = () => {
               }}>
                 Alternar Cliente
               </p>
+
+              {/* Major Hub option (admin only, when not already in global mode) */}
+              {isAdmin && !isGlobalMode && (
+                <button
+                  onClick={() => handleSwitchClient('global')}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '6px 10px',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: 'hsl(var(--brand-cyan))',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    fontWeight: 600,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--bg-surface))')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <Globe size={10} style={{ flexShrink: 0 }} />
+                  Major Hub
+                </button>
+              )}
 
               {otherClients.map((client) => (
                 <button
@@ -325,15 +386,23 @@ export const Sidebar = () => {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 const NavItem = ({
-  icon, label, isActive, onClick,
-}: { icon: React.ReactNode; label: string; isActive: boolean; onClick: () => void }) => (
+  icon, label, isActive, onClick, accent,
+}: { icon: React.ReactNode; label: string; isActive: boolean; onClick: () => void; accent?: boolean }) => (
   <button
     onClick={onClick}
     style={{
       width: '100%', display: 'flex', alignItems: 'center', gap: 8,
       padding: '7px 8px', borderRadius: 'var(--radius-sm)',
-      background: isActive ? 'hsl(var(--brand-cyan) / 0.12)' : 'none',
-      border: isActive ? '1px solid hsl(var(--brand-cyan) / 0.25)' : '1px solid transparent',
+      background: isActive
+        ? accent
+          ? 'hsl(var(--brand-cyan) / 0.15)'
+          : 'hsl(var(--brand-cyan) / 0.12)'
+        : 'none',
+      border: isActive
+        ? accent
+          ? '1px solid hsl(var(--brand-cyan) / 0.4)'
+          : '1px solid hsl(var(--brand-cyan) / 0.25)'
+        : '1px solid transparent',
       color: isActive ? 'hsl(var(--brand-cyan))' : 'hsl(var(--text-muted))',
       fontSize: '13px', fontWeight: isActive ? 600 : 400,
       cursor: 'pointer', textAlign: 'left',
