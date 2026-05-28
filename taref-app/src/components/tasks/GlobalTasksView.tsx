@@ -65,44 +65,47 @@ const ClientSection = ({
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '6px 2px',
+          gap: 10,
+          padding: '8px 6px',
           marginBottom: 8,
           cursor: 'pointer',
           userSelect: 'none',
+          borderRadius: 4,
+          background: headerHovered ? 'hsl(var(--bg-elevated))' : 'transparent',
+          transition: 'background var(--duration-fast)',
         }}
       >
-        {/* Small avatar */}
+        {/* Avatar */}
         <div style={{
-          width: 22, height: 22, flexShrink: 0,
+          width: 36, height: 36, flexShrink: 0,
           background: clientColor,
-          borderRadius: 4,
+          borderRadius: 6,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '10px', fontWeight: 800, letterSpacing: '0.02em',
+          fontSize: '13px', fontWeight: 800, letterSpacing: '0.02em',
           fontFamily: 'JetBrains Mono, monospace',
           color: '#fff',
         }}>
           {initials}
         </div>
 
-        {/* Client name */}
-        <span style={{
-          fontSize: '14px', fontWeight: 700, letterSpacing: '-0.02em',
-          color: headerHovered ? 'hsl(var(--text-primary))' : 'hsl(var(--text-primary))',
-          whiteSpace: 'nowrap',
-        }}>
-          {clientName}
-        </span>
-
-        {/* Project count */}
-        <span style={{
-          fontSize: '11px',
-          fontFamily: 'JetBrains Mono, monospace',
-          color: 'hsl(var(--text-faint))',
-          whiteSpace: 'nowrap',
-        }}>
-          {projects.length} {projects.length === 1 ? 'projeto' : 'projetos'}
-        </span>
+        {/* Client name + counts */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <span style={{
+            fontSize: '16px', fontWeight: 700, letterSpacing: '-0.03em',
+            color: 'hsl(var(--text-primary))',
+            whiteSpace: 'nowrap', lineHeight: 1.2,
+          }}>
+            {clientName}
+          </span>
+          <span style={{
+            fontSize: '11px',
+            fontFamily: 'JetBrains Mono, monospace',
+            color: 'hsl(var(--text-faint))',
+            whiteSpace: 'nowrap',
+          }}>
+            {projects.length} {projects.length === 1 ? 'projeto' : 'projetos'} · {tasks.length} {tasks.length === 1 ? 'tarefa' : 'tarefas'}
+          </span>
+        </div>
 
         {/* Separator line */}
         <div style={{
@@ -238,13 +241,13 @@ export const GlobalTasksView = ({ searchQuery }: GlobalTasksViewProps) => {
             <Globe size={14} color="#fff" />
           </div>
           <h2 style={{
-            fontSize: 18, fontWeight: 700, letterSpacing: '-0.03em',
+            fontSize: 25, fontWeight: 700, letterSpacing: '-0.03em',
             color: 'hsl(var(--text-primary))', margin: 0,
           }}>
             Tarefas
           </h2>
           <span style={{
-            fontSize: '9px', fontWeight: 700,
+            fontSize: '12px', fontWeight: 700,
             fontFamily: 'JetBrains Mono, monospace',
             color: 'hsl(var(--text-faint))',
             padding: '2px 0', letterSpacing: '0.08em',
@@ -308,7 +311,7 @@ export const GlobalTasksView = ({ searchQuery }: GlobalTasksViewProps) => {
       {filteredClients.length === 0 ? (
         <div style={{
           padding: '48px 20px', textAlign: 'center',
-          fontSize: 13, color: 'hsl(var(--text-faint))',
+          fontSize: 12, color: 'hsl(var(--text-faint))',
         }}>
           {searchQuery
             ? `Nenhum resultado para "${searchQuery}".`

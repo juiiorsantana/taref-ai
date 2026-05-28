@@ -11,14 +11,63 @@ import type { Task, Project, ProjectStatus, SubTask } from '../../types'
 
 const PROJECT_STATUSES: { value: ProjectStatus; label: string }[] = [
   { value: 'em_andamento', label: 'Em andamento' },
-  { value: 'pausado',      label: 'Pausado' },
-  { value: 'concluido',    label: 'Concluído' },
+  { value: 'pausado', label: 'Pausado' },
+  { value: 'concluido', label: 'Concluído' },
 ]
 
 const STATUS_COLOR: Record<ProjectStatus, string> = {
   em_andamento: 'hsl(var(--brand-cyan))',
-  pausado:      'hsl(var(--brand-amber))',
-  concluido:    'hsl(var(--brand-emerald))',
+  pausado: 'hsl(var(--brand-amber))',
+  concluido: 'hsl(var(--brand-emerald))',
+}
+
+const STATUS_CYCLE: ProjectStatus[] = ['em_andamento', 'pausado', 'concluido']
+
+// ─── ProjectStatusBadge ───────────────────────────────────────────────────────
+
+const ProjectStatusBadge = ({
+  status,
+  onChange,
+}: {
+  status: ProjectStatus
+  onChange: (s: ProjectStatus) => void
+}) => {
+  const label = PROJECT_STATUSES.find((s) => s.value === status)?.label ?? status
+  const color = STATUS_COLOR[status]
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const idx = STATUS_CYCLE.indexOf(status)
+    onChange(STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length])
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      title="Clique para alterar status"
+      style={{
+        fontSize: 10, fontWeight: 600, letterSpacing: '0.04em',
+        textTransform: 'uppercase', color,
+        background: `${color}18`,
+        border: `1px solid ${color}44`,
+        borderRadius: 3, padding: '2px 8px',
+        cursor: 'pointer', fontFamily: 'inherit',
+        transition: 'all var(--duration-fast)',
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = `${color}30`
+        e.currentTarget.style.borderColor = `${color}88`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = `${color}18`
+        e.currentTarget.style.borderColor = `${color}44`
+      }}
+    >
+      {label}
+    </button>
+  )
 }
 
 const COLOR_OPTIONS = ['#06B6D4', '#1E40AF', '#D97706', '#10B981', '#EF4444', '#F97316']
@@ -32,10 +81,10 @@ export const EditProjectModal = ({ project, onClose }: { project: Project | null
   useEffect(() => {
     if (project) {
       setForm({
-        name:        project.name,
+        name: project.name,
         description: project.description ?? '',
-        color:       project.color,
-        status:      project.status ?? 'em_andamento',
+        color: project.color,
+        status: project.status ?? 'em_andamento',
       })
     }
   }, [project])
@@ -203,16 +252,16 @@ export const ProjectAccordion = ({
     inputRef.current?.focus()
   }
 
-  const handleStatusChange = (value: string) => {
+  const handleStatusChange = (value: ProjectStatus) => {
     dispatch({
       type: 'UPDATE_PROJECT',
-      payload: { ...project, status: value as ProjectStatus },
+      payload: { ...project, status: value },
     })
   }
 
   const currentStatus: ProjectStatus = project.status ?? 'em_andamento'
-  const statusColor = STATUS_COLOR[currentStatus]
   const doneCount = tasks.filter((t) => t.status === 'done').length
+  const progressPct = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0
 
   return (
     <div data-comp="tlv-section" style={{
@@ -225,7 +274,6 @@ export const ProjectAccordion = ({
       <div data-comp="tlv-section-header" style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '10px 14px',
-        borderBottom: isExpanded ? '1px solid hsl(var(--border-subtle))' : 'none',
         background: 'hsl(var(--bg-elevated))',
       }}>
         <div style={{
@@ -234,7 +282,7 @@ export const ProjectAccordion = ({
         }} />
 
         <span data-comp="tlv-section-title" style={{
-          flex: 1, fontSize: 13, fontWeight: 700,
+          flex: 1, fontSize: 10, fontWeight: 700,
           letterSpacing: '-0.02em', color: 'hsl(var(--text-primary))',
         }}>
           {project.name}
@@ -257,22 +305,7 @@ export const ProjectAccordion = ({
           {doneCount}/{tasks.length}
         </span>
 
-        <select
-          value={currentStatus}
-          onChange={(e) => handleStatusChange(e.target.value)}
-          style={{
-            fontSize: 10, fontWeight: 600, letterSpacing: '0.04em',
-            textTransform: 'uppercase', color: statusColor,
-            background: 'transparent',
-            border: `1px solid ${statusColor}55`,
-            borderRadius: 2, padding: '2px 6px',
-            cursor: 'pointer', appearance: 'none',
-          }}
-        >
-          {PROJECT_STATUSES.map((s) => (
-            <option key={s.value} value={s.value}>{s.label}</option>
-          ))}
-        </select>
+        <ProjectStatusBadge status={currentStatus} onChange={handleStatusChange} />
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -288,74 +321,86 @@ export const ProjectAccordion = ({
         </button>
       </div>
 
+      {/* ── Progress bar ── */}
+      <div style={{ height: 2, background: 'hsl(var(--border-subtle))' }}>
+        <div style={{
+          width: `${progressPct}%`,
+          height: '100%',
+          background: project.color,
+          transition: 'width 400ms ease',
+        }} />
+      </div>
+
       {/* ── Task list ── */}
       <div data-comp="tlv-tasks" style={{
-        maxHeight: isExpanded ? 9999 : 0,
-        overflow: 'hidden',
-        transition: 'max-height var(--duration-slow) var(--ease-out)',
+        display: 'grid',
+        gridTemplateRows: isExpanded ? '1fr' : '0fr',
+        transition: 'grid-template-rows var(--duration-slow) var(--ease-out)',
       }}>
-        <div style={{ padding: '4px 0' }}>
-          {tasks.length === 0 && !addingTask && (
-            <div style={{
-              padding: '10px 16px', fontSize: 12,
-              color: 'hsl(var(--text-faint))',
-            }}>
-              Nenhuma tarefa ainda.
-            </div>
-          )}
-
-          {tasks.map((task) => (
-            <TaskRow key={task.id} task={task} onOpen={onOpenTask} />
-          ))}
-
-          {/* Inline add */}
-          {addingTask ? (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              padding: '6px 14px 8px',
-            }}>
+        <div style={{ overflow: 'hidden' }}>
+          <div style={{ padding: '4px 0' }}>
+            {tasks.length === 0 && !addingTask && (
               <div style={{
-                width: 15, height: 15, flexShrink: 0,
-                border: '1px solid hsl(var(--border-subtle))',
-                borderRadius: 2,
-              }} />
-              <input
-                ref={inputRef}
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleAddTask()
-                  if (e.key === 'Escape') { setAddingTask(false); setNewTaskTitle('') }
-                }}
-                onBlur={() => { if (!newTaskTitle.trim()) setAddingTask(false) }}
-                placeholder="Nome da tarefa..."
+                padding: '10px 16px', fontSize: 12,
+                color: 'hsl(var(--text-faint))',
+              }}>
+                Nenhuma tarefa ainda.
+              </div>
+            )}
+
+            {tasks.map((task) => (
+              <TaskRow key={task.id} task={task} onOpen={onOpenTask} />
+            ))}
+
+            {/* Inline add */}
+            {addingTask ? (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '6px 14px 8px',
+              }}>
+                <div style={{
+                  width: 15, height: 15, flexShrink: 0,
+                  border: '1px solid hsl(var(--border-subtle))',
+                  borderRadius: 2,
+                }} />
+                <input
+                  ref={inputRef}
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAddTask()
+                    if (e.key === 'Escape') { setAddingTask(false); setNewTaskTitle('') }
+                  }}
+                  onBlur={() => { if (!newTaskTitle.trim()) setAddingTask(false) }}
+                  placeholder="Nome da tarefa..."
+                  style={{
+                    flex: 1, background: 'none', border: 'none', outline: 'none',
+                    fontSize: 13, color: 'hsl(var(--text-primary))', fontFamily: 'inherit',
+                  }}
+                />
+                <span style={{ fontSize: 10, color: 'hsl(var(--text-faint))', whiteSpace: 'nowrap' }}>
+                  ↵ confirmar · esc cancelar
+                </span>
+              </div>
+            ) : (
+              <button
+                data-comp="tlv-add"
+                onClick={() => setAddingTask(true)}
                 style={{
-                  flex: 1, background: 'none', border: 'none', outline: 'none',
-                  fontSize: 13, color: 'hsl(var(--text-primary))', fontFamily: 'inherit',
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '7px 14px', background: 'none', border: 'none',
+                  cursor: 'pointer', color: 'hsl(var(--text-faint))',
+                  fontSize: 12, textAlign: 'left',
+                  transition: 'color var(--duration-fast)',
                 }}
-              />
-              <span style={{ fontSize: 10, color: 'hsl(var(--text-faint))', whiteSpace: 'nowrap' }}>
-                ↵ confirmar · esc cancelar
-              </span>
-            </div>
-          ) : (
-            <button
-              data-comp="tlv-add"
-              onClick={() => setAddingTask(true)}
-              style={{
-                width: '100%', display: 'flex', alignItems: 'center', gap: 6,
-                padding: '7px 14px', background: 'none', border: 'none',
-                cursor: 'pointer', color: 'hsl(var(--text-faint))',
-                fontSize: 12, textAlign: 'left',
-                transition: 'color var(--duration-fast)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'hsl(var(--brand-cyan))')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'hsl(var(--text-faint))')}
-            >
-              <Plus size={12} />
-              Adicionar tarefa...
-            </button>
-          )}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'hsl(var(--brand-cyan))')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'hsl(var(--text-faint))')}
+              >
+                <Plus size={12} />
+                Adicionar tarefa...
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -370,9 +415,12 @@ const TaskRow = ({ task, onOpen }: { task: Task; onOpen: (task: Task) => void })
   const [hovered, setHovered] = useState(false)
 
   const isHighPriority = task.priority === 'alta'
+  const isDoing = task.status === 'doing'
   const isDone = task.status === 'done'
   const overdue = isOverdue(task.deadline) && !isDone
   const dueSoon = isDueSoon(task.deadline) && !isDone
+
+  const completedSubtasks = task.subtasks.filter((s) => s.completed).length
 
   const handleToggle = () => {
     dispatch({
@@ -382,14 +430,19 @@ const TaskRow = ({ task, onOpen }: { task: Task; onOpen: (task: Task) => void })
   }
 
   const priorityDotColor =
-    task.priority === 'alta'  ? 'hsl(var(--brand-rose))' :
-    task.priority === 'media' ? 'hsl(var(--brand-amber))' :
-                                'hsl(var(--text-faint))'
+    task.priority === 'alta' ? 'hsl(var(--brand-rose))' :
+      task.priority === 'media' ? 'hsl(var(--brand-amber))' :
+        'hsl(var(--text-faint))'
 
   const deadlineColor =
-    overdue  ? 'hsl(var(--brand-rose))' :
-    dueSoon  ? 'hsl(var(--brand-amber))' :
-               'hsl(var(--text-faint))'
+    overdue ? 'hsl(var(--brand-rose))' :
+      dueSoon ? 'hsl(var(--brand-amber))' :
+        'hsl(var(--text-faint))'
+
+  const leftBorderColor =
+    isHighPriority && !isDone ? 'hsl(var(--brand-cyan))' :
+      isDoing && !isDone ? 'hsl(var(--brand-amber))' :
+        'transparent'
 
   return (
     <div>
@@ -400,9 +453,7 @@ const TaskRow = ({ task, onOpen }: { task: Task; onOpen: (task: Task) => void })
         style={{
           display: 'flex', alignItems: 'center', gap: 9,
           padding: '7px 14px',
-          borderLeft: isHighPriority && !isDone
-            ? '2px solid hsl(var(--brand-cyan))'
-            : '2px solid transparent',
+          borderLeft: `2px solid ${leftBorderColor}`,
           background: hovered ? 'hsl(var(--bg-elevated))' : 'transparent',
           transition: 'background var(--duration-fast)',
         }}
@@ -459,10 +510,10 @@ const TaskRow = ({ task, onOpen }: { task: Task; onOpen: (task: Task) => void })
           </button>
         </div>
 
-        {/* Metadata — subtle, brightens on hover */}
+        {/* Metadata */}
         <div data-comp="tlv-meta" style={{
           display: 'flex', alignItems: 'center', gap: 7,
-          opacity: hovered ? 1 : 0.3,
+          opacity: hovered ? 1 : overdue ? 1 : 0.65,
           transition: 'opacity var(--duration-base)',
         }}>
           <div style={{
@@ -474,8 +525,22 @@ const TaskRow = ({ task, onOpen }: { task: Task; onOpen: (task: Task) => void })
             <span style={{
               fontSize: 10, fontFamily: 'JetBrains Mono, monospace',
               color: deadlineColor,
+              fontWeight: overdue ? 700 : 400,
             }}>
               {formatDateBR(task.deadline)}
+            </span>
+          )}
+
+          {task.subtasks.length > 0 && (
+            <span style={{
+              fontSize: 9, fontFamily: 'JetBrains Mono, monospace',
+              color: 'hsl(var(--text-faint))',
+              background: 'hsl(var(--bg-elevated))',
+              border: '1px solid hsl(var(--border-subtle))',
+              borderRadius: 2, padding: '1px 4px',
+              whiteSpace: 'nowrap',
+            }}>
+              {completedSubtasks}/{task.subtasks.length}
             </span>
           )}
 
